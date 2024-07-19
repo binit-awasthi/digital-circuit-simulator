@@ -10,12 +10,10 @@ Gate::Gate(std::string type, float width, float height, sf::Vector2f pos)
 {
     this->type = type;
 
-    // Port p1;
-    // Port p2;
-    // p2.setState(true);
+    iPorts.push_back(InputPort());
+    iPorts.push_back(InputPort());
 
-    iPorts.emplace_back(InputPort());
-    iPorts.emplace_back(InputPort());
+    iPorts.begin()->setState(true);
 
     setColor();
 
@@ -42,8 +40,11 @@ void Gate::setPosition(sf::Vector2f pos)
     gate.setPosition(pos);
     label.setPosition(sf::Vector2f(pos.x - 1, pos.y - 2));
 
-    iPorts[0].setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
-    for (int i = 1; i < iPorts.size(); i++)
+    // iPorts[0].setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
+
+    iPorts.begin()->setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
+
+    for (size_t i = 1; i < iPorts.size(); i++)
     {
         iPorts[i].setPosition(sf::Vector2f(pos.x - width / 2, iPorts[i - 1].getPosition().y + portOffset));
     }
@@ -60,14 +61,7 @@ void Gate::setSize(float width, float height)
 
 void Gate::setText(std::string str)
 {
-
-    // if (!font.loadFromFile("./assets/fonts/Hack-Regular.ttf"))
-    // {
-    //     std::cout << "Failed to load font" << std::endl;
-    // }
-
     label.setFont(FontManager::font);
-    // label.setFont(font);
     label.setCharacterSize(15);
     label.setString(str);
 }
@@ -92,10 +86,12 @@ void Gate::drawTo(sf::RenderWindow &window)
     window.draw(gate);
     window.draw(label);
 
-    for (auto &port : iPorts)
+    for (auto &ip : iPorts)
     {
-        port.drawTo(window);
+        ip.drawTo(window);
     }
+
+    // oPort.setChildrenState();
     oPort.drawTo(window);
 }
 
@@ -116,7 +112,7 @@ void Gate::setTextColor(sf::Color color)
     label.setFillColor(textColor);
 }
 
-void Gate::setFont(sf::Font &font)
+void Gate::setFont(sf::Font font)
 {
     label.setFont(font);
 }
@@ -184,10 +180,11 @@ bool Gate::isClicked(sf::RenderWindow &window)
 void Gate::clickAction(sf::RenderWindow &window)
 {
     // gateClickAction();
-    portClickAction(window);
+    // portClickAction(window);
+    logicOperation();
 }
 
-void Gate::portClickAction(sf::RenderWindow &window)
+void Gate::logicOperation()
 {
 
     if (type == LOGIC_AND)
@@ -236,7 +233,7 @@ bool Gate::logicAnd()
     bool state = true;
     for (auto &port : iPorts)
     {
-        state = state && port.getState();
+        state = (state && port.getState());
     }
 
     return state;
@@ -247,7 +244,7 @@ bool Gate::logicOr()
     bool state = false;
     for (auto &port : iPorts)
     {
-        state = state || port.getState();
+        state = (state || port.getState());
     }
 
     return state;
@@ -258,7 +255,7 @@ bool Gate::logicXor()
     bool state = false;
     for (auto &port : iPorts)
     {
-        state = state != port.getState();
+        state = (state != port.getState());
     }
 
     return state;
@@ -268,7 +265,7 @@ bool Gate::logicNot()
 {
     if (!iPorts.empty())
     {
-        return !iPorts[0].getState();
+        return !(iPorts[0].getState());
     }
     return false;
 }

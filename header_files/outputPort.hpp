@@ -10,5 +10,5 @@ class OutputPort : public Port
 public:
     std::vector<InputPort *> childPorts;
 
-    void setChildrenState(bool state);
+    // void setChildrenState();
 };

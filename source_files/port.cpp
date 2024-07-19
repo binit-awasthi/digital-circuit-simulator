@@ -1,12 +1,12 @@
 #include "../header_files/port.hpp"
 
 std::vector<Port> Port::ports;
-Port *Port::prevPort = nullptr;
-Port *Port::selected = nullptr;
+// Port *Port::prevPort = nullptr;
+// Port *Port::selected = nullptr;
 
-sf::RectangleShape Port::currentConnection;
-sf::Vector2f Port::startPoint;
-bool Port::isConnecting = false;
+// sf::RectangleShape Port::currentConnection;
+// sf::Vector2f Port::startPoint;
+// bool Port::isConnecting = false;
 
 float Port::portRadius = 5.f;
 
@@ -15,7 +15,7 @@ Port::Port()
 
     //
     //
-    moving = false;
+    // moving = false;
 
     port.setRadius(Port::portRadius);
     port.setOrigin(port.getRadius(), port.getRadius());
@@ -69,7 +69,7 @@ void Port::updateColor()
 
 void Port::drawTo(sf::RenderWindow &window)
 {
-    window.draw(port);
+    window.draw(this->port);
 }
 
 //

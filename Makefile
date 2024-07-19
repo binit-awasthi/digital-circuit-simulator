@@ -1,7 +1,7 @@
 all: compile run 
 
 compile:
-	g++ -g main.cpp ./source_files/*.cpp -o main.out -lsfml-graphics -lsfml-window -lsfml-system 
+	g++ -g -Wall main.cpp ./source_files/*.cpp -o main.out -lsfml-graphics -lsfml-window -lsfml-system 
 
 run: 
 	./main.out

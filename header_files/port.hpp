@@ -14,14 +14,14 @@ class Port
 
 public:
     static std::vector<Port> ports;
-    static Port *prevPort;
-    static sf::RectangleShape currentConnection;
-    static sf::Vector2f startPoint;
-    static bool isConnecting;
-    static Port *selected;
+    // static Port *prevPort;
+    // static sf::RectangleShape currentConnection;
+    // static sf::Vector2f startPoint;
+    // static bool isConnecting;
+    // static Port *selected;
     static float portRadius;
 
-    bool moving;
+    // bool moving;
 
     Port();
 
