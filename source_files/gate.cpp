@@ -5,6 +5,7 @@ std::string Gate::LOGIC_OR = "OR";
 std::string Gate::LOGIC_XOR = "XOR";
 std::string Gate::LOGIC_NOT = "NOT";
 std::vector<Gate *> Gate::gates;
+int Gate::count;
 
 // Gate::Gate(std::string type, float width, float height, sf::Vector2f pos)
 Gate::Gate(std::string type, sf::Vector2f pos)
@@ -293,10 +294,46 @@ sf::FloatRect Gate::getLocalBounds()
 
 void Gate::addGate(std::string type, sf::Vector2f pos)
 {
-    Gate::gates.push_back(new Gate(type, pos));
+    gates.push_back(new Gate(type, pos));
+    count++;
 }
 
 Gate::~Gate()
 {
+    count--;
     std::cout << "deleted" << std::endl;
+}
+
+int Gate::getCount()
+{
+    return gates.size();
+    // return count;
+}
+
+void Gate::removeGate(Gate &gateToRemove)
+{
+    for (auto gateIt = gates.begin(); gateIt != gates.end();)
+    {
+        if (*gateIt == &gateToRemove)
+        {
+            // deleteConnections(window, connections, gate);
+            delete *gateIt;
+            gateIt = gates.erase(gateIt);
+            std::cout << "Deleted: gate" << std::endl;
+            break;
+        }
+        else
+        {
+            ++gateIt;
+        }
+    }
+}
+
+void Gate::removeAll()
+{
+    for (auto &gate : gates)
+    {
+        delete gate;
+    }
+    gates.clear();
 }

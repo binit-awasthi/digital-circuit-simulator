@@ -4,12 +4,18 @@
 
 #include "./header_files/inputPort.hpp"
 #include "./header_files/outputPort.hpp"
+#include "./header_files/statusBar.hpp"
 
 sf::Vector2f getMousePos(sf::RenderWindow &);
 void displayChildren(OutputPort &oPort);
+void deleteGate(sf::RenderWindow &, std::vector<std::tuple<sf::RectangleShape, Port *, Port *>> &);
+void deleteConnections(sf::RenderWindow &window, std::vector<std::tuple<sf::RectangleShape, Port *, Port *>> &connections, Gate &gate);
 
 void mainLoop(sf::RenderWindow &window)
 {
+    StatusBar status(FontManager::font);
+    status.setPosition(sf::Vector2f(20.f, window.getSize().y - status.getGlobalBounds().height * 2.f));
+
     bool isConnecting = false;
     sf::Vector2f startPoint;
 
@@ -126,6 +132,8 @@ void mainLoop(sf::RenderWindow &window)
             }
         }
 
+        status.setString("gate count: " + std::to_string(Gate::gates.size()));
+
         window.clear(sf::Color::Black);
 
         if (isConnecting)
@@ -139,6 +147,8 @@ void mainLoop(sf::RenderWindow &window)
             gate->oPort.setChildrenState();
             gate->drawTo(window);
         }
+
+        status.drawTo(window);
 
         window.display();
     }
