@@ -4,16 +4,19 @@ std::string Gate::LOGIC_AND = "AND";
 std::string Gate::LOGIC_OR = "OR";
 std::string Gate::LOGIC_XOR = "XOR";
 std::string Gate::LOGIC_NOT = "NOT";
-std::vector<Gate> Gate::gates;
+std::vector<Gate *> Gate::gates;
 
-Gate::Gate(std::string type, float width, float height, sf::Vector2f pos)
+// Gate::Gate(std::string type, float width, float height, sf::Vector2f pos)
+Gate::Gate(std::string type, sf::Vector2f pos)
 {
+    width = 100.f;
+    height = 50.f;
     this->type = type;
 
     iPorts.push_back(InputPort());
     iPorts.push_back(InputPort());
 
-    iPorts.begin()->setState(true);
+    iPorts.front().setState(true);
 
     setColor();
 
@@ -42,9 +45,9 @@ void Gate::setPosition(sf::Vector2f pos)
 
     // iPorts[0].setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
 
-    iPorts.begin()->setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
+    iPorts.front().setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
 
-    for (size_t i = 1; i < iPorts.size(); i++)
+    for (size_t i = 1; i < iPorts.size(); ++i)
     {
         iPorts[i].setPosition(sf::Vector2f(pos.x - width / 2, iPorts[i - 1].getPosition().y + portOffset));
     }
@@ -186,7 +189,6 @@ void Gate::clickAction(sf::RenderWindow &window)
 
 void Gate::logicOperation()
 {
-
     if (type == LOGIC_AND)
         oPort.setState(logicAnd());
 
@@ -287,4 +289,14 @@ sf::FloatRect Gate::getGlobalBounds()
 sf::FloatRect Gate::getLocalBounds()
 {
     return gate.getLocalBounds();
+}
+
+void Gate::addGate(std::string type, sf::Vector2f pos)
+{
+    Gate::gates.push_back(new Gate(type, pos));
+}
+
+Gate::~Gate()
+{
+    std::cout << "deleted" << std::endl;
 }

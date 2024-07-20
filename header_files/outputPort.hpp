@@ -7,8 +7,10 @@ class InputPort;
 class OutputPort : public Port
 {
 
+    bool state;
+
 public:
     std::vector<InputPort *> childPorts;
 
-    // void setChildrenState();
+    void setChildrenState();
 };

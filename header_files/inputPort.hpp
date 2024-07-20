@@ -9,5 +9,6 @@ class InputPort : public Port
 {
 
 public:
-    OutputPort *parentPort = NULL;
+    OutputPort *parentPort = nullptr;
+
 };

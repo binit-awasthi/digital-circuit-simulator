@@ -55,7 +55,7 @@ class Gate
 
 public:
     // gates vector
-    static std::vector<Gate> gates;
+    static std::vector<Gate *> gates;
 
     // ports
     std::vector<InputPort> iPorts;
@@ -69,7 +69,9 @@ public:
     static std::string LOGIC_XOR;
     static std::string LOGIC_NOT;
 
-    Gate(std::string type = LOGIC_AND, float width = 80.f, float height = 100.f, sf::Vector2f pos = sf::Vector2f(100, 100));
+    // Gate(std::string type = LOGIC_AND, float width = 100.f, float height = 80.f, sf::Vector2f pos = sf::Vector2f(100, 100));
+    Gate(std::string type = LOGIC_AND, sf::Vector2f pos = sf::Vector2f(100, 100));
+    ~Gate();
 
     // setters
     void setLabel(std::string str);
@@ -100,6 +102,7 @@ public:
     void toggleState();
     void toggleColor();
 
+    static void addGate(std::string type, sf::Vector2f pos);
     Gate duplicate();
     void drawTo(sf::RenderWindow &window);
 };

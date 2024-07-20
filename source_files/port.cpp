@@ -69,7 +69,7 @@ void Port::updateColor()
 
 void Port::drawTo(sf::RenderWindow &window)
 {
-    window.draw(this->port);
+    window.draw(port);
 }
 
 //
