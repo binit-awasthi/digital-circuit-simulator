@@ -3,18 +3,30 @@
 
 void OutputPort::setChildrenState()
 {
-    // if (!childPorts.empty())
-    // {
     for (auto port : childPorts)
     {
-        if (port == nullptr)
-        {
-            std::cout << "null" << std::endl;
-            continue;
-        }
+        // if (port == nullptr)
+        // {
+        //     std::cout << "null" << std::endl;
+        //     continue;
+        // }
 
-        port->setState(this->getState());
-        // std::cout << "input: " << port << " output: " << this << std::endl;
+        if (!port->isConnected)
+            port->setState(this->getState());
     }
+}
+
+OutputPort::~OutputPort()
+{
+    for (auto port : childPorts)
+    // for (auto port : childPorts)
+    {
+        port->setState(false);
+        port->isConnected = false;
+    }
+
+    // for (auto &port : childPorts)
+    // {
+    //     port->parentPort = nullptr;
     // }
 }

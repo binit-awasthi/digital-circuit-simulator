@@ -65,8 +65,10 @@ public:
 
     // statics
     static void addGate(std::string type, sf::Vector2f pos);
-    static void removeGate(Gate &);
-    void removeAll();
+
+    static void removeGate(Gate *);
+    static void removeAll();
+    static void removeAtPos(sf::Vector2f);
 
     static int getCount();
 
@@ -109,6 +111,10 @@ public:
     void toggleState();
     void toggleColor();
 
-    Gate duplicate();
+    void duplicate();
+    void clearState();
+
+    // void remove();
+
     void drawTo(sf::RenderWindow &window);
 };

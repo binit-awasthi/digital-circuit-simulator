@@ -278,9 +278,15 @@ bool Gate::contains(sf::Vector2f pos)
     return (gate.getGlobalBounds().contains(pos)) ? true : false;
 }
 
-Gate Gate::duplicate()
+// Gate Gate::duplicate()
+// {
+
+//     return *this;
+// }
+
+void Gate::duplicate()
 {
-    return *this;
+    gates.push_back(new Gate(*this));
 }
 
 sf::FloatRect Gate::getGlobalBounds()
@@ -300,6 +306,9 @@ void Gate::addGate(std::string type, sf::Vector2f pos)
 
 Gate::~Gate()
 {
+    // for(auto &port : this->oPort.childPorts){
+
+    // }
     count--;
     std::cout << "deleted" << std::endl;
 }
@@ -310,11 +319,38 @@ int Gate::getCount()
     // return count;
 }
 
-void Gate::removeGate(Gate &gateToRemove)
+void Gate::removeGate(Gate *gateToRemove)
 {
     for (auto gateIt = gates.begin(); gateIt != gates.end();)
     {
-        if (*gateIt == &gateToRemove)
+        if (*gateIt == gateToRemove)
+        {
+            // deleteConnections(window, connections, gate);
+
+
+            
+            delete *gateIt;
+            gateIt = gates.erase(gateIt);
+            std::cout << "Deleted: gate" << std::endl;
+            break;
+        }
+        else
+        {
+            ++gateIt;
+        }
+    }
+}
+
+void Gate::removeAtPos(sf::Vector2f pos)
+{
+
+    for (auto gateIt = Gate::gates.begin(); gateIt != Gate::gates.end();)
+    {
+
+        // auto &gate = *gateIt;
+
+        // if (gate->contains(pos))
+        if ((*gateIt)->contains(pos))
         {
             // deleteConnections(window, connections, gate);
             delete *gateIt;
@@ -329,6 +365,10 @@ void Gate::removeGate(Gate &gateToRemove)
     }
 }
 
+// void Gate::remove()
+// {
+//     Gate::removeGate(this);
+// }
 void Gate::removeAll()
 {
     for (auto &gate : gates)
@@ -336,4 +376,15 @@ void Gate::removeAll()
         delete gate;
     }
     gates.clear();
+}
+
+void Gate::clearState()
+{
+    for (auto &port : iPorts)
+    {
+        port.setState(false);
+    }
+
+    oPort.setState(false);
+    // logicOperation();
 }

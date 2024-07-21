@@ -9,6 +9,6 @@ class InputPort : public Port
 {
 
 public:
+    bool isConnected = false;
     OutputPort *parentPort = nullptr;
-
 };
