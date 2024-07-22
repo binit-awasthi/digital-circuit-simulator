@@ -6,6 +6,7 @@
 // #include "port.hpp"
 #include "inputPort.hpp"
 #include "outputPort.hpp"
+#include "connection.hpp"
 
 class Gate
 {
@@ -114,6 +115,7 @@ public:
 
     // void duplicate();
     void clearState();
+    void deleteConnections();
 
     // void remove();
 

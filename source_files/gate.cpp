@@ -294,6 +294,7 @@ sf::FloatRect Gate::getGlobalBounds()
 {
     return gate.getGlobalBounds();
 }
+
 sf::FloatRect Gate::getLocalBounds()
 {
     return gate.getLocalBounds();
@@ -307,9 +308,6 @@ void Gate::addGate(std::string type, sf::Vector2f pos)
 
 Gate::~Gate()
 {
-    // for(auto &port : this->oPort.childPorts){
-
-    // }
     count--;
     std::cout << "deleted: gate" << std::endl
               << "gate count: " << Gate::getCount() << std::endl
@@ -345,15 +343,21 @@ void Gate::removeGate(Gate *gateToRemove)
 void Gate::removeAtPos(sf::Vector2f pos)
 {
 
-    for (auto gateIt = Gate::gates.begin(); gateIt != Gate::gates.end();)
+    // auto itEnd = std::remove(gates.begin(), gates.end(), )
+
+    for (auto gateIt = gates.begin(); gateIt != gates.end();)
     {
+
+        auto gate = *gateIt;
 
         // auto &gate = *gateIt;
 
         // if (gate->contains(pos))
-        if ((*gateIt)->contains(pos))
+        if (gate->contains(pos))
+        // if ((*gateIt)->contains(pos))
         {
             // deleteConnections(window, connections, gate);
+            gate->deleteConnections();
             delete *gateIt;
             gateIt = gates.erase(gateIt);
             std::cout << "gate deleted successfully" << std::endl;
@@ -366,35 +370,15 @@ void Gate::removeAtPos(sf::Vector2f pos)
     }
 }
 
-// void Gate::remove()
-// {
-//     Gate::removeGate(this);
-// }
 void Gate::removeAll()
 {
-    try
+    for (Gate *gate : gates)
     {
-        // for (Gate *gate : gates)
-        for (auto &gate : gates)
-        {
-            delete gate;
-        }
-        std::cout << "all gates deleted successfully" << std::endl
-                  << std::endl;
+        gate->deleteConnections();
+        delete gate;
     }
-    catch (...)
-    {
-        std::cout << "deletion failed: " << std::endl;
-    }
-    try
-    {
-        gates.clear();
-    }
-
-    catch (...)
-    {
-        std::cout << "clearing failed: " << std::endl;
-    }
+    gates.clear();
+    std::cout << "all gates deleted successfully and cleared" << std::endl;
 }
 
 void Gate::clearState()
@@ -406,4 +390,67 @@ void Gate::clearState()
 
     // oPort.setState(false);
     logicOperation();
+}
+
+void Gate::deleteConnections()
+{
+    try
+    {
+        // First remove connections related to the output port
+        for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+        {
+            auto con = *conIt;
+            if (con->op == &this->oPort)
+            {
+                delete con;
+                conIt = Connection::connections.erase(conIt);
+                std::cout << "deleted: connection" << std::endl;
+            }
+            else
+            {
+                ++conIt;
+            }
+        }
+
+        // Then remove connections related to the input ports
+        for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+        {
+            auto con = *conIt;
+            bool found = false;
+            for (auto &port : this->iPorts)
+            {
+                if (con->ip == &port)
+                {
+                    found = true;
+                    delete con;
+                    conIt = Connection::connections.erase(conIt);
+                    std::cout << "deleted: connection" << std::endl;
+                    port.isConnected = false;
+                    port.parentPort = nullptr;
+                    port.setState(false);
+                    break;
+                }
+            }
+            if (!found)
+            {
+                ++conIt;
+            }
+        }
+
+        logicOperation();
+
+        // Clear child ports of the output port
+        for (auto port : this->oPort.childPorts)
+        {
+            port->parentPort = nullptr;
+            port->setState(false);
+            port->isConnected = false;
+        }
+
+        this->oPort.childPorts.clear();
+    }
+    catch (...)
+    {
+        std::cout << "error occurred" << std::endl;
+    }
 }

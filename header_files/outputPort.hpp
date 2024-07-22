@@ -10,8 +10,8 @@ class OutputPort : public Port
     bool state;
 
 public:
-    ~OutputPort();
+    // ~OutputPort();
     std::vector<InputPort *> childPorts;
 
-    void setChildrenState();
+    // void setChildrenState();
 };
