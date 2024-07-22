@@ -31,6 +31,7 @@ void mainLoop(sf::RenderWindow &window)
         {
             if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
             {
+                Gate::removeAll();
                 window.close();
             }
 
@@ -83,7 +84,8 @@ void mainLoop(sf::RenderWindow &window)
                         {
                             if (gate->contains(getMousePos(window)))
                             {
-                                gate->duplicate();
+                                // gate->duplicate();
+                                std::cout << "duplicate" << std::endl;
                                 break;
                             }
                         }

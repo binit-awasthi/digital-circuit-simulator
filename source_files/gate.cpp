@@ -278,15 +278,11 @@ bool Gate::contains(sf::Vector2f pos)
     return (gate.getGlobalBounds().contains(pos)) ? true : false;
 }
 
-// Gate Gate::duplicate()
-// {
-
-//     return *this;
-// }
-
-void Gate::duplicate()
+Gate *Gate::duplicate()
 {
-    gates.push_back(new Gate(*this));
+    // gates.push_back(new Gate(type, static_cast<sf::Vector2f>(sf::Mouse::getPosition())));
+    gates.push_back(new Gate(type));
+    return gates.back();
 }
 
 sf::FloatRect Gate::getGlobalBounds()
@@ -310,7 +306,9 @@ Gate::~Gate()
 
     // }
     count--;
-    std::cout << "deleted" << std::endl;
+    std::cout << "deleted: gate" << std::endl
+              << "gate count: " << Gate::getCount() << std::endl
+              << std::endl;
 }
 
 int Gate::getCount()
@@ -327,11 +325,9 @@ void Gate::removeGate(Gate *gateToRemove)
         {
             // deleteConnections(window, connections, gate);
 
-
-            
             delete *gateIt;
             gateIt = gates.erase(gateIt);
-            std::cout << "Deleted: gate" << std::endl;
+            // std::cout << "Deleted: gate" << std::endl;
             break;
         }
         else
@@ -355,7 +351,7 @@ void Gate::removeAtPos(sf::Vector2f pos)
             // deleteConnections(window, connections, gate);
             delete *gateIt;
             gateIt = gates.erase(gateIt);
-            std::cout << "Deleted: gate" << std::endl;
+            std::cout << "gate deleted successfully" << std::endl;
             break;
         }
         else
@@ -371,11 +367,28 @@ void Gate::removeAtPos(sf::Vector2f pos)
 // }
 void Gate::removeAll()
 {
-    for (auto &gate : gates)
+    try
     {
-        delete gate;
+        for (Gate *gate : gates)
+        {
+            delete gate;
+        }
+        std::cout << "all gates deleted successfully" << std::endl
+                  << std::endl;
     }
-    gates.clear();
+    catch (...)
+    {
+        std::cout << "deletion failed: " << std::endl;
+    }
+    try
+    {
+        gates.clear();
+    }
+
+    catch (...)
+    {
+        std::cout << "clearing failed: " << std::endl;
+    }
 }
 
 void Gate::clearState()
@@ -385,6 +398,6 @@ void Gate::clearState()
         port.setState(false);
     }
 
-    oPort.setState(false);
-    // logicOperation();
+    // oPort.setState(false);
+    logicOperation();
 }

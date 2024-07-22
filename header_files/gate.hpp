@@ -111,7 +111,7 @@ public:
     void toggleState();
     void toggleColor();
 
-    void duplicate();
+    Gate* duplicate();
     void clearState();
 
     // void remove();

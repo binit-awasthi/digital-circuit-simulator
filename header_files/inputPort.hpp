@@ -9,6 +9,7 @@ class InputPort : public Port
 {
 
 public:
+    ~InputPort();
     bool isConnected = false;
     OutputPort *parentPort = nullptr;
 };
