@@ -11,6 +11,8 @@ void displayChildren(OutputPort &oPort);
 void deleteGate(sf::RenderWindow &, std::vector<std::tuple<sf::RectangleShape, Port *, Port *>> &);
 void deleteConnections(sf::RenderWindow &window, std::vector<std::tuple<sf::RectangleShape, Port *, Port *>> &connections, Gate &gate);
 
+bool duplicate = false;
+
 void mainLoop(sf::RenderWindow &window)
 {
     StatusBar status(FontManager::font);
@@ -80,14 +82,24 @@ void mainLoop(sf::RenderWindow &window)
 
                     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
                     {
+
                         for (auto &gate : Gate::gates)
                         {
+                            // if (gate->contains(getMousePos(window)))
+                            // {
+                            //     gate->duplicate();
+                            //     selectedGate = Gate::gates.back();
+                            //     duplicate = true;
+                            //     break;
+                            // }
                             if (gate->contains(getMousePos(window)))
-                            {
-                                // gate->duplicate();
+                                // {
+                                //     // gate->duplicate();
                                 std::cout << "duplicate" << std::endl;
-                                break;
-                            }
+                            //     Gate::addGate(gate->getType(), getMousePos(window));
+                            //     // duplicate = true;
+                            break;
+                            // }
                         }
                     }
 
@@ -95,8 +107,12 @@ void mainLoop(sf::RenderWindow &window)
 
                     sf::Vector2f mousePos = getMousePos(window);
 
-                    for (Gate *const &gate : Gate::gates)
+                    // for (Gate *const &gate : Gate::gates)
+                    for (auto &gate : Gate::gates)
                     {
+                        // if (duplicate)
+                        //     break;
+
                         if (gate->oPort.contains(mousePos))
                         {
                             isConnecting = true;
@@ -106,7 +122,7 @@ void mainLoop(sf::RenderWindow &window)
                             currentConnection.setOrigin(0, currentConnection.getLocalBounds().height / 2);
                             currentConnection.setPosition(startPoint);
                             currentConnection.setFillColor(sf::Color::White);
-                            prevPort = &gate->oPort;
+                            prevPort = &(gate->oPort);
                             break;
                         }
 
@@ -129,12 +145,14 @@ void mainLoop(sf::RenderWindow &window)
                     {
                         sf::Vector2f mousePos = getMousePos(window);
                         bool escape = false;
-                        for (auto *const &gate : Gate::gates)
+
+                        for (auto &gate : Gate::gates)
+                        // for (auto *const &gate : Gate::gates)
                         {
                             for (auto &port : gate->iPorts)
                             {
-                                // if (port.parentPort != nullptr)
-                                if (port.isConnected)
+                                if (port.parentPort != nullptr && port.isConnected)
+                                // if (port.isConnected)
                                 {
                                     continue;
                                 }
@@ -152,9 +170,11 @@ void mainLoop(sf::RenderWindow &window)
                                     port.setState(prevPort->getState());
 
                                     prevPort->childPorts.push_back(&port);
-                                    // port.parentPort = prevPort;
 
-                                    std::cout << "port: " << &port << " parent: " << port.parentPort << " prevPort: " << &prevPort << std::endl;
+                                    port.parentPort = prevPort;
+                                    port.isConnected = true;
+
+                                    std::cout << "child input port: " << &port << " parent output port: " << port.parentPort << " prevPort: " << &prevPort << '\n';
 
                                     prevPort = nullptr;
 
@@ -182,6 +202,7 @@ void mainLoop(sf::RenderWindow &window)
                 if (selectedGate != nullptr)
                 {
                     selectedGate->setPosition(getMousePos(window));
+                    // duplicate = false;
                 }
             }
 
@@ -205,7 +226,8 @@ void mainLoop(sf::RenderWindow &window)
             window.draw(currentConnection);
         }
 
-        for (auto *const &gate : Gate::gates)
+        // for (auto *const &gate : Gate::gates)
+        for (auto &gate : Gate::gates)
         {
             gate->logicOperation();
             gate->oPort.setChildrenState();
@@ -217,7 +239,8 @@ void mainLoop(sf::RenderWindow &window)
         window.display();
     }
 
-    for (Gate *gate : Gate::gates)
+    // for (Gate *gate : Gate::gates)
+    for (auto &gate : Gate::gates)
     {
         delete gate;
     }
@@ -232,7 +255,8 @@ void displayChildren(OutputPort &oPort)
 {
     for (auto &port : oPort.childPorts)
     {
-        std::cout << "input: " << &port << " output: " << &oPort << std::endl;
+        std::cout << "input: " << port << " output: " << &oPort << std::endl;
+        // std::cout << "input: " << &port << " output: " << &oPort << std::endl;
     }
 }
 

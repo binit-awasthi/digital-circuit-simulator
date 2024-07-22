@@ -93,6 +93,7 @@ public:
     void setPadding(float padding);
 
     // getters
+    std::string getType();
     sf::Color getBgColor();
     sf::Color getTextColor();
     sf::Vector2f getPosition();
@@ -111,7 +112,7 @@ public:
     void toggleState();
     void toggleColor();
 
-    Gate* duplicate();
+    // void duplicate();
     void clearState();
 
     // void remove();

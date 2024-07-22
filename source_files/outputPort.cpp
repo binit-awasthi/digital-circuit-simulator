@@ -3,7 +3,7 @@
 
 void OutputPort::setChildrenState()
 {
-    for (auto port : childPorts)
+    for (auto &port : childPorts)
     {
         if (port == nullptr)
         {
@@ -11,18 +11,19 @@ void OutputPort::setChildrenState()
             continue;
         }
 
-        if (!port->isConnected)
-            port->setState(this->getState());
+        // if (!port->isConnected)
+        port->setState(this->getState());
     }
 }
 
 OutputPort::~OutputPort()
 {
-    for (auto port : childPorts)
-    // for (auto &port : childPorts)
+    // for (auto port : childPorts)
+    for (auto &port : childPorts)
     {
         port->setState(false);
         port->isConnected = false;
+        port->parentPort = nullptr;
         std::cout << "deleted: child port" << std::endl;
     }
 

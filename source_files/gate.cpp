@@ -278,12 +278,17 @@ bool Gate::contains(sf::Vector2f pos)
     return (gate.getGlobalBounds().contains(pos)) ? true : false;
 }
 
-Gate *Gate::duplicate()
+std::string Gate::getType()
 {
-    // gates.push_back(new Gate(type, static_cast<sf::Vector2f>(sf::Mouse::getPosition())));
-    gates.push_back(new Gate(type));
-    return gates.back();
+    return type;
 }
+
+// void Gate::duplicate()
+// {
+//     addGate(this->getType(), this->getPosition());
+//     // gates.push_back(new Gate(this->type, this->getPosition()));
+//     // return dup;
+// }
 
 sf::FloatRect Gate::getGlobalBounds()
 {
@@ -369,7 +374,8 @@ void Gate::removeAll()
 {
     try
     {
-        for (Gate *gate : gates)
+        // for (Gate *gate : gates)
+        for (auto &gate : gates)
         {
             delete gate;
         }
