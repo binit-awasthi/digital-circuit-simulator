@@ -7,7 +7,6 @@ std::string Gate::LOGIC_NOT = "NOT";
 std::vector<Gate *> Gate::gates;
 int Gate::count;
 
-// Gate::Gate(std::string type, float width, float height, sf::Vector2f pos)
 Gate::Gate(std::string type, sf::Vector2f pos)
 {
     width = 100.f;
@@ -183,8 +182,6 @@ bool Gate::isClicked(sf::RenderWindow &window)
 
 void Gate::clickAction(sf::RenderWindow &window)
 {
-    // gateClickAction();
-    // portClickAction(window);
     logicOperation();
 }
 
@@ -308,6 +305,7 @@ void Gate::addGate(std::string type, sf::Vector2f pos)
 
 Gate::~Gate()
 {
+    delete this;
     count--;
     std::cout << "deleted: gate" << std::endl
               << "gate count: " << Gate::getCount() << std::endl
@@ -328,7 +326,7 @@ void Gate::removeGate(Gate *gateToRemove)
         {
             // deleteConnections(window, connections, gate);
 
-            delete *gateIt;
+            // delete *gateIt;
             gateIt = gates.erase(gateIt);
             // std::cout << "Deleted: gate" << std::endl;
             break;
@@ -343,24 +341,17 @@ void Gate::removeGate(Gate *gateToRemove)
 void Gate::removeAtPos(sf::Vector2f pos)
 {
 
-    // auto itEnd = std::remove(gates.begin(), gates.end(), )
-
     for (auto gateIt = gates.begin(); gateIt != gates.end();)
     {
 
         auto gate = *gateIt;
 
-        // auto &gate = *gateIt;
-
-        // if (gate->contains(pos))
         if (gate->contains(pos))
-        // if ((*gateIt)->contains(pos))
         {
-            // deleteConnections(window, connections, gate);
             gate->deleteConnections();
-            delete *gateIt;
+            // delete *gateIt;
             gateIt = gates.erase(gateIt);
-            std::cout << "gate deleted successfully" << std::endl;
+            // std::cout << "gate deleted successfully" << std::endl;
             break;
         }
         else
@@ -375,7 +366,7 @@ void Gate::removeAll()
     for (Gate *gate : gates)
     {
         gate->deleteConnections();
-        delete gate;
+        // delete gate;
     }
     gates.clear();
     std::cout << "all gates deleted successfully and cleared" << std::endl;
@@ -402,9 +393,9 @@ void Gate::deleteConnections()
             auto con = *conIt;
             if (con->op == &this->oPort)
             {
-                delete con;
+                // delete con;
                 conIt = Connection::connections.erase(conIt);
-                std::cout << "deleted: connection" << std::endl;
+                // std::cout << "deleted: connection" << std::endl;
             }
             else
             {
@@ -422,7 +413,8 @@ void Gate::deleteConnections()
                 if (con->ip == &port)
                 {
                     found = true;
-                    delete con;
+                    // con =nullptr;
+                    // delete con;
                     conIt = Connection::connections.erase(conIt);
                     std::cout << "deleted: connection" << std::endl;
                     port.isConnected = false;

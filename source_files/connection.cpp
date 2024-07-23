@@ -18,26 +18,11 @@ void Connection::connect()
     drawConnection();
 }
 
-// Connection::~Connection()
-// {
-//     // ip->isConnected = false;
-//     // ip->parentPort = nullptr;
-
-//     for (auto conIt = connections.begin(); conIt != connections.end();)
-//     {
-//         if (*conIt == this)
-//         {
-//             delete *conIt;
-//             conIt = connections.erase(conIt);
-//             std::cout << "deleted: connection" << std::endl;
-//             break;
-//         }
-//         else
-//         {
-//             ++conIt;
-//         }
-//     }
-// }
+Connection::~Connection()
+{
+    std::cout << "deleted connection at " << this << std::endl;
+    delete this;
+}
 
 void Connection::drawConnection()
 {
@@ -65,50 +50,3 @@ void Connection::updateState()
 {
     ip->setState(op->getState());
 }
-
-// void Connection::deleteConnections(Gate *gate)
-// {
-//     for (auto conIt = connections.begin(); conIt != connections.end();)
-//     {
-//         auto &con = *conIt;
-//         if (con->op == &gate->oPort)
-//         {
-//             delete *conIt;
-//             conIt = connections.erase(conIt);
-
-//             std::cout << "deleted: connection" << std::endl;
-//         }
-
-//         else
-//         {
-//             ++conIt;
-//         }
-//     }
-//     for (auto conIt = connections.begin(); conIt != connections.end();)
-//     {
-//         auto &con = *conIt;
-//         for (auto &port : gate->iPorts)
-//         {
-//             if (con->ip == &port)
-//             {
-//                 delete *conIt;
-//                 conIt = connections.erase(conIt);
-//                 std::cout << "deleted: connection" << std::endl;
-//                 port.isConnected = false;
-//                 port.parentPort = nullptr;
-//                 port.setState(false);
-//                 break;
-//             }
-//         }
-//         ++conIt;
-//     }
-
-//     for (auto port : gate->oPort.childPorts)
-//     {
-//         port->parentPort = nullptr;
-//         port->setState(false);
-//         port->isConnected = false;
-//     }
-
-//     gate->oPort.childPorts.clear();
-// }
