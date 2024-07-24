@@ -6,6 +6,8 @@
 #include "./header_files/outputPort.hpp"
 #include "./header_files/statusBar.hpp"
 #include "./header_files/connection.hpp"
+#include "./header_files/inputSignal.hpp"
+#include "./header_files/outputSignal.hpp"
 
 sf::Vector2f getMousePos(sf::RenderWindow &);
 
@@ -47,6 +49,7 @@ void mainLoop(sf::RenderWindow &window)
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::X)
                 {
                     Gate::removeAll();
+                    OutputSignal::removeAll();
                 }
             }
 
@@ -54,7 +57,32 @@ void mainLoop(sf::RenderWindow &window)
             {
                 if (event.mouseButton.button == sf::Mouse::Right)
                 {
-                    Gate::removeAtPos(getMousePos(window));
+                    sf::Vector2f mousePos = getMousePos(window);
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                    {
+                        for (auto gate : Gate::gates)
+                        {
+                            if (gate->contains(mousePos))
+                            {
+                                gate->deleteConnections();
+                                break;
+                            }
+                        }
+                        for (auto signal : OutputSignal::signals)
+                        {
+                            if (signal->contains(mousePos))
+                            {
+                                signal->deleteConnections();
+                                break;
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        Gate::removeAtPos(getMousePos(window));
+                        OutputSignal::removeAtPos(getMousePos(window));
+                    }
                 }
 
                 if (event.mouseButton.button == sf::Mouse::Left)
@@ -66,6 +94,14 @@ void mainLoop(sf::RenderWindow &window)
                     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
                     {
                         Gate::addGate(Gate::LOGIC_OR, getMousePos(window));
+                    }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
+                    {
+                        Gate::addGate(Gate::LOGIC_NOT, getMousePos(window));
+                    }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt))
+                    {
+                        OutputSignal::signals.push_back(new OutputSignal(getMousePos(window)));
                     }
 
                     //
@@ -140,6 +176,19 @@ void mainLoop(sf::RenderWindow &window)
                             if (escape)
                                 break;
                         }
+                        //
+                        for (auto signal : OutputSignal::signals)
+                        {
+                            if (signal->isConnected)
+                                continue;
+
+                            if (signal->contains(mousePos))
+                            {
+                                Connection::connections.push_back(new Connection(signal, prevPort));
+                                break;
+                            }
+                        }
+                        //
                         isConnecting = false;
                         prevPort = nullptr;
                     }
@@ -190,22 +239,15 @@ void mainLoop(sf::RenderWindow &window)
             gate->drawTo(window);
         }
 
+        for (auto signal : OutputSignal::signals)
+        {
+            signal->drawTo(window);
+        }
+
         status.drawTo(window);
 
         window.display();
     }
-
-    // for (auto gate : Gate::gates)
-    // {
-    //     delete gate;
-    // }
-    // Gate::gates.clear();
-
-    // for (auto connection : Connection::connections)
-    // {
-    //     delete connection;
-    // }
-    // Connection::connections.clear();
 }
 
 sf::Vector2f getMousePos(sf::RenderWindow &window)

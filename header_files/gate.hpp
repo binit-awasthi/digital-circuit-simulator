@@ -39,10 +39,6 @@ class Gate
     void setText(std::string str);
     void setColor();
 
-    // click actions
-    //
-    //
-    // void portClickAction(sf::RenderWindow &window);
     void gateClickAction(sf::RenderWindow &window);
 
     // port
@@ -57,7 +53,6 @@ class Gate
     static int count;
 
 public:
-    // Gate(std::string type = LOGIC_AND, float width = 100.f, float height = 80.f, sf::Vector2f pos = sf::Vector2f(100, 100));
     Gate(std::string type = LOGIC_AND, sf::Vector2f pos = sf::Vector2f(100, 100));
     ~Gate();
 
@@ -116,8 +111,8 @@ public:
     // void duplicate();
     void clearState();
     void deleteConnections();
+    void setGate();
 
-    // void remove();
 
     void drawTo(sf::RenderWindow &window);
 };
