@@ -376,57 +376,50 @@ void Gate::clearState()
 
 void Gate::deleteConnections()
 {
-    try
+    for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
     {
-        for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+        auto con = *conIt;
+        if (con->op == &this->oPort)
         {
-            auto con = *conIt;
-            if (con->op == &this->oPort)
+            conIt = Connection::connections.erase(conIt);
+        }
+        else
+        {
+            ++conIt;
+        }
+    }
+
+    for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+    {
+        auto con = *conIt;
+        bool found = false;
+        for (auto &port : this->iPorts)
+        {
+            if (con->ip == &port)
             {
+                found = true;
                 conIt = Connection::connections.erase(conIt);
-            }
-            else
-            {
-                ++conIt;
+                std::cout << "deleted: connection" << std::endl;
+                port.isConnected = false;
+                port.parentPort = nullptr;
+                port.setState(false);
+                break;
             }
         }
-
-        for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+        if (!found)
         {
-            auto con = *conIt;
-            bool found = false;
-            for (auto &port : this->iPorts)
-            {
-                if (con->ip == &port)
-                {
-                    found = true;
-                    conIt = Connection::connections.erase(conIt);
-                    std::cout << "deleted: connection" << std::endl;
-                    port.isConnected = false;
-                    port.parentPort = nullptr;
-                    port.setState(false);
-                    break;
-                }
-            }
-            if (!found)
-            {
-                ++conIt;
-            }
+            ++conIt;
         }
-
-        logicOperation();
-
-        for (auto port : this->oPort.childPorts)
-        {
-            port->parentPort = nullptr;
-            port->setState(false);
-            port->isConnected = false;
-        }
-
-        this->oPort.childPorts.clear();
     }
-    catch (...)
+
+    logicOperation();
+
+    for (auto port : this->oPort.childPorts)
     {
-        std::cout << "error occurred" << std::endl;
+        port->parentPort = nullptr;
+        port->setState(false);
+        port->isConnected = false;
     }
+
+    this->oPort.childPorts.clear();
 }

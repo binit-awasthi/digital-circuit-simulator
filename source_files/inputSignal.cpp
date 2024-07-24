@@ -1,13 +1,68 @@
 #include "../header_files/inputSignal.hpp"
 
-std::vector<InputSignal *> InputSignal::inputSignals;
+std::vector<InputSignal *> InputSignal::signals;
+InputSignal *InputSignal::selected = nullptr;
 
-InputSignal::InputSignal(InputPort *port)
+InputSignal::InputSignal(sf::Vector2f pos)
 {
-    port->setState(getState());
+    this->setRadius(10.f);
+    this->setOutlineColor(sf::Color::Blue);
+    this->setOutlineThickness(2.f);
+    this->setPosition(pos);
 }
 
 InputSignal::~InputSignal()
 {
     delete this;
+}
+
+void InputSignal::deleteConnections()
+{
+
+    for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+    {
+        auto con = *conIt;
+
+        if (con->op == this)
+        {
+            conIt = Connection::connections.erase(conIt);
+            // break;
+        }
+        else
+            ++conIt;
+    }
+
+    for (auto child : childPorts)
+    {
+        child->parentPort = nullptr;
+        child->isConnected = false;
+        child->setState(false);
+    }
+    childPorts.clear();
+}
+
+void InputSignal::removeAtPos(sf::Vector2f pos)
+{
+
+    for (auto it = signals.begin(); it != signals.end();)
+    {
+        auto sig = *it;
+
+        if (sig->contains(pos))
+        {
+            sig->deleteConnections();
+            it = signals.erase(it);
+            break;
+        }
+        ++it;
+    }
+}
+
+void InputSignal::removeAll()
+{
+    for (auto signal : signals)
+    {
+        signal->deleteConnections();
+    }
+    signals.clear();
 }

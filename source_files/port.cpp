@@ -118,3 +118,12 @@ void Port::duplicate()
 {
     Port::ports.push_back(*this);
 }
+
+void Port::setOutlineColor(sf::Color color)
+{
+    port.setOutlineColor(color);
+}
+void Port::setOutlineThickness(float value)
+{
+    port.setOutlineThickness(value);
+}

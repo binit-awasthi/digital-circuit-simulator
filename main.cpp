@@ -33,6 +33,9 @@ void mainLoop(sf::RenderWindow &window)
             if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
             {
                 Gate::removeAll();
+                OutputSignal::removeAll();
+                InputSignal::removeAll();
+
                 window.close();
             }
 
@@ -50,6 +53,7 @@ void mainLoop(sf::RenderWindow &window)
                 {
                     Gate::removeAll();
                     OutputSignal::removeAll();
+                    InputSignal::removeAll();
                 }
             }
 
@@ -76,12 +80,21 @@ void mainLoop(sf::RenderWindow &window)
                                 break;
                             }
                         }
+                        for (auto signal : InputSignal::signals)
+                        {
+                            if (signal->contains(mousePos))
+                            {
+                                signal->deleteConnections();
+                                break;
+                            }
+                        }
                     }
 
                     else
                     {
                         Gate::removeAtPos(getMousePos(window));
                         OutputSignal::removeAtPos(getMousePos(window));
+                        InputSignal::removeAtPos(getMousePos(window));
                     }
                 }
 
@@ -103,6 +116,10 @@ void mainLoop(sf::RenderWindow &window)
                     {
                         OutputSignal::signals.push_back(new OutputSignal(getMousePos(window)));
                     }
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))
+                    {
+                        InputSignal::signals.push_back(new InputSignal(getMousePos(window)));
+                    }
 
                     //
 
@@ -114,6 +131,15 @@ void mainLoop(sf::RenderWindow &window)
                             if (gate->contains(getMousePos(window)))
                             {
                                 std::cout << "duplicate" << std::endl;
+                                break;
+                            }
+                        }
+
+                        for (auto signal : InputSignal::signals)
+                        {
+                            if (signal->contains(getMousePos(window)))
+                            {
+                                signal->toggleState();
                                 break;
                             }
                         }
@@ -141,6 +167,22 @@ void mainLoop(sf::RenderWindow &window)
                         else if (gate->contains(mousePos))
                         {
                             selectedGate = gate;
+                            break;
+                        }
+                    }
+
+                    for (auto signal : InputSignal::signals)
+                    {
+                        if (signal->contains(mousePos))
+                        {
+                            isConnecting = true;
+                            startPoint = signal->getPosition();
+
+                            currentConnection.setSize(sf::Vector2f(0, 3.f));
+                            currentConnection.setOrigin(0, currentConnection.getLocalBounds().height / 2);
+                            currentConnection.setPosition(startPoint);
+                            currentConnection.setFillColor(signal->getState() ? sf::Color::Green : sf::Color::White);
+                            prevPort = signal;
                             break;
                         }
                     }
@@ -240,6 +282,10 @@ void mainLoop(sf::RenderWindow &window)
         }
 
         for (auto signal : OutputSignal::signals)
+        {
+            signal->drawTo(window);
+        }
+        for (auto signal : InputSignal::signals)
         {
             signal->drawTo(window);
         }

@@ -14,26 +14,19 @@ class Port
 
 public:
     static std::vector<Port> ports;
-    // static Port *prevPort;
-    // static sf::RectangleShape currentConnection;
-    // static sf::Vector2f startPoint;
-    // static bool isConnecting;
-    // static Port *selected;
     static float portRadius;
-
-    // bool moving;
 
     Port();
 
     void setState(bool);
-    // void setBgColor(sf::Color);
     void updateColor();
     void setRadius(float);
     void setPosition(sf::Vector2f);
+    void setOutlineColor(sf::Color);
+    void setOutlineThickness(float);
     void toggleState();
 
     bool getState();
-    // sf::Color getBgColor();
     float getRadius();
     sf::Vector2f getPosition();
     void drawTo(sf::RenderWindow &);
