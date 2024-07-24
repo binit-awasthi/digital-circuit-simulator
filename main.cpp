@@ -1,18 +1,10 @@
-#include "./header_files/includes.hpp"
-#include "./header_files/fontManager.hpp"
-#include "./header_files/gate.hpp"
-
-#include "./header_files/inputPort.hpp"
-#include "./header_files/outputPort.hpp"
-#include "./header_files/statusBar.hpp"
-#include "./header_files/connection.hpp"
-#include "./header_files/inputSignal.hpp"
-#include "./header_files/outputSignal.hpp"
+#include "./header_files/main.hpp"
 
 sf::Vector2f getMousePos(sf::RenderWindow &);
 
 void mainLoop(sf::RenderWindow &window)
 {
+    Component components(window);
 
     StatusBar status(FontManager::font);
     status.setPosition(sf::Vector2f(20.f, window.getSize().y - status.getGlobalBounds().height * 2.f));
@@ -65,36 +57,66 @@ void mainLoop(sf::RenderWindow &window)
                     sf::Vector2f mousePos = getMousePos(window);
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
                     {
+                        bool connDeleted = false;
                         for (auto gate : Gate::gates)
                         {
                             if (gate->contains(mousePos))
                             {
                                 gate->deleteConnections();
+                                connDeleted = true;
                                 break;
                             }
                         }
-                        for (auto signal : OutputSignal::signals)
-                        {
-                            if (signal->contains(mousePos))
+
+                        if (!connDeleted)
+                            for (auto signal : OutputSignal::signals)
                             {
-                                signal->deleteConnections();
-                                break;
+                                if (signal->contains(mousePos))
+                                {
+                                    signal->deleteConnections();
+                                    connDeleted = true;
+                                    break;
+                                }
                             }
-                        }
+                        if (!connDeleted)
+                            for (auto signal : InputSignal::signals)
+                            {
+                                if (signal->contains(mousePos))
+                                {
+                                    signal->deleteConnections();
+                                    break;
+                                }
+                            }
+                    }
+
+                    else
+                    {
+                        Gate::removeAtPos(mousePos);
+                        OutputSignal::removeAtPos(mousePos);
+                        InputSignal::removeAtPos(mousePos);
+                    }
+                }
+
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    sf::Vector2f mousePos = getMousePos(window);
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                    {
                         for (auto signal : InputSignal::signals)
                         {
                             if (signal->contains(mousePos))
                             {
-                                signal->deleteConnections();
+                                selectedPort = signal;
                                 break;
                             }
                         }
                     }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+
+                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
                     {
                         for (auto signal : InputSignal::signals)
                         {
-                            if (signal->contains(getMousePos(window)))
+                            if (signal->contains(mousePos))
                             {
                                 signal->toggleState();
                                 break;
@@ -102,71 +124,46 @@ void mainLoop(sf::RenderWindow &window)
                         }
                     }
 
-                    else
-                    {
-                        Gate::removeAtPos(getMousePos(window));
-                        OutputSignal::removeAtPos(getMousePos(window));
-                        InputSignal::removeAtPos(getMousePos(window));
-                    }
-                }
-
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-                    {
-                        Gate::addGate(Gate::LOGIC_AND, getMousePos(window));
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
-                    {
-                        Gate::addGate(Gate::LOGIC_OR, getMousePos(window));
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
-                    {
-                        Gate::addGate(Gate::LOGIC_NOT, getMousePos(window));
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt))
-                    {
-                        OutputSignal::signals.push_back(new OutputSignal(getMousePos(window)));
-                    }
-                    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))
-                    {
-                        InputSignal::signals.push_back(new InputSignal(getMousePos(window)));
-                    }
-
                     //
 
                     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
                     {
+                        bool mouseContained = false;
 
                         for (auto &gate : Gate::gates)
                         {
-                            if (gate->contains(getMousePos(window)))
+                            if (gate->contains(mousePos))
                             {
-                                gate->duplicate(getMousePos(window));
+                                gate->duplicate(mousePos);
                                 selectedGate = Gate::gates.back();
+                                mouseContained = true;
                                 break;
                             }
                         }
 
-                        for (auto signal : InputSignal::signals)
-                        {
-                            if (signal->contains(getMousePos(window)))
+                        if (!mouseContained)
+                            for (auto signal : InputSignal::signals)
                             {
-                                signal->duplicate();
-                                selectedPort = InputSignal::signals.back();
-                                // signal->toggleState();
-                                break;
+                                if (signal->contains(mousePos))
+                                {
+                                    signal->duplicate();
+                                    selectedPort = InputSignal::signals.back();
+                                    mouseContained = true;
+                                    break;
+                                }
                             }
-                        }
-                        for (auto signal : OutputSignal::signals)
-                        {
-                            if (signal->contains(getMousePos(window)))
+
+                        if (!mouseContained)
+                            for (auto signal : OutputSignal::signals)
                             {
-                                signal->duplicate();
-                                selectedPort = OutputSignal::signals.back();
-                                break;
+                                if (signal->contains(mousePos))
+                                {
+                                    signal->duplicate();
+                                    selectedPort = OutputSignal::signals.back();
+                                    mouseContained = true;
+                                    break;
+                                }
                             }
-                        }
                     }
 
                     //
@@ -176,6 +173,7 @@ void mainLoop(sf::RenderWindow &window)
 
                         sf::Vector2f mousePos = getMousePos(window);
 
+                        bool mouseContained = false;
                         for (Gate *const gate : Gate::gates)
                         {
                             if (gate->oPort.contains(mousePos))
@@ -188,37 +186,68 @@ void mainLoop(sf::RenderWindow &window)
                                 currentConnection.setPosition(startPoint);
                                 currentConnection.setFillColor(gate->oPort.getState() ? sf::Color::Green : sf::Color::White);
                                 prevPort = &gate->oPort;
+                                mouseContained = true;
                                 break;
                             }
 
                             else if (gate->contains(mousePos))
                             {
                                 selectedGate = gate;
+                                mouseContained = true;
                                 break;
                             }
                         }
 
-                        for (auto signal : InputSignal::signals)
-                        {
-                            if (signal->contains(mousePos))
+                        if (!mouseContained)
+                            for (auto signal : InputSignal::signals)
                             {
-                                isConnecting = true;
-                                startPoint = signal->getPosition();
+                                if (signal->contains(mousePos))
+                                {
+                                    isConnecting = true;
+                                    startPoint = signal->getPosition();
 
-                                currentConnection.setSize(sf::Vector2f(0, 3.f));
-                                currentConnection.setOrigin(0, currentConnection.getLocalBounds().height / 2);
-                                currentConnection.setPosition(startPoint);
-                                currentConnection.setFillColor(signal->getState() ? sf::Color::Green : sf::Color::White);
-                                prevPort = signal;
-                                break;
+                                    currentConnection.setSize(sf::Vector2f(0, 3.f));
+                                    currentConnection.setOrigin(0, currentConnection.getLocalBounds().height / 2);
+                                    currentConnection.setPosition(startPoint);
+                                    currentConnection.setFillColor(signal->getState() ? sf::Color::Green : sf::Color::White);
+                                    prevPort = signal;
+                                    mouseContained = true;
+                                    break;
+                                }
+                            }
+                        if (!mouseContained)
+
+                            for (auto signal : OutputSignal::signals)
+                            {
+                                if (signal->contains(mousePos))
+                                {
+                                    selectedPort = signal;
+                                    mouseContained = true;
+                                    break;
+                                }
                             }
 
-                            else if (signal->contains(mousePos))
+                        //
+
+                        if (!mouseContained)
+                            for (auto &comp : Component::components)
                             {
-                                selectedPort = signal;
-                                break;
+                                if (comp.contains(mousePos))
+                                {
+                                    int compCode = Component::newComponent(comp, mousePos);
+
+                                    if (compCode == 0)
+                                        selectedGate = Gate::gates.back();
+                                    else if (compCode == 1)
+                                        selectedPort = InputSignal::signals.back();
+                                    else if (compCode == 2)
+                                        selectedPort = OutputSignal::signals.back();
+                                    mouseContained = true;
+                                    break;
+                                }
                             }
-                        }
+
+                        //
                     }
                 }
             }
@@ -288,16 +317,15 @@ void mainLoop(sf::RenderWindow &window)
                     selectedPort->setPosition(getMousePos(window));
                 }
             }
-
-            if (isConnecting)
-            {
-                sf::Vector2f mousePos = getMousePos(window);
-                sf::Vector2f vec = mousePos - startPoint;
-                float magnitude = std::sqrt(vec.x * vec.x + vec.y * vec.y);
-                float angle = (180.f / 3.141592f) * std::atan2(vec.y, vec.x);
-                currentConnection.setSize(sf::Vector2f(magnitude, 3.f));
-                currentConnection.setRotation(angle);
-            }
+        }
+        if (isConnecting)
+        {
+            sf::Vector2f mousePos = getMousePos(window);
+            sf::Vector2f vec = mousePos - startPoint;
+            float magnitude = std::sqrt(vec.x * vec.x + vec.y * vec.y);
+            float angle = (180.f / 3.141592f) * std::atan2(vec.y, vec.x);
+            currentConnection.setSize(sf::Vector2f(magnitude, 3.f));
+            currentConnection.setRotation(angle);
         }
 
         status.setString("gate count: " + std::to_string(Gate::gates.size()));
@@ -313,6 +341,8 @@ void mainLoop(sf::RenderWindow &window)
         {
             connection->drawTo(window);
         }
+
+        components.drawTo(window);
 
         for (auto gate : Gate::gates)
         {

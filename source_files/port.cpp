@@ -13,10 +13,6 @@ float Port::portRadius = 5.f;
 Port::Port()
 {
 
-    //
-    //
-    // moving = false;
-
     port.setRadius(Port::portRadius);
     port.setOrigin(port.getRadius(), port.getRadius());
 
@@ -25,8 +21,11 @@ Port::Port()
     state = false;
 
     updateColor();
+}
 
-    // ports.push_back(*this);
+void Port::setOrigin(float x, float y)
+{
+    port.setOrigin(x, y);
 }
 
 void Port::setState(bool state)
@@ -104,8 +103,6 @@ void Port::clickAction(sf::RenderWindow &window)
     if (isClicked(window))
     {
         toggleState();
-        // std::cout << "port state: " << state << std::endl;
-        // toggleColor();
     }
 }
 

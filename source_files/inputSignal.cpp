@@ -5,9 +5,10 @@ InputSignal *InputSignal::selected = nullptr;
 
 InputSignal::InputSignal(sf::Vector2f pos)
 {
-    this->setRadius(10.f);
+    this->setRadius(9.f);
+    this->setOrigin(this->getRadius(), this->getRadius());
     this->setOutlineColor(sf::Color::Blue);
-    this->setOutlineThickness(2.f);
+    this->setOutlineThickness(1.7f);
     this->setPosition(pos);
 }
 
@@ -26,7 +27,6 @@ void InputSignal::deleteConnections()
         if (con->op == this)
         {
             conIt = Connection::connections.erase(conIt);
-            // break;
         }
         else
             ++conIt;

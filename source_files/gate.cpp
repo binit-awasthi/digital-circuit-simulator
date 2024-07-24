@@ -200,6 +200,28 @@ void Gate::clickAction(sf::RenderWindow &window)
 
 void Gate::logicOperation()
 {
+    boolCount = 0;
+    for (auto &port : iPorts)
+    {
+        if (port.isConnected)
+        {
+            bools.push_back(port.getState());
+            boolCount++;
+        }
+    }
+
+    if (boolCount == 1 && type == LOGIC_NOT)
+    {
+        oPort.setState(logicNot());
+        return;
+    }
+
+    else if (boolCount < 2)
+    {
+        oPort.setState(false);
+        return;
+    }
+
     if (type == LOGIC_AND)
         oPort.setState(logicAnd());
 
@@ -209,20 +231,16 @@ void Gate::logicOperation()
     else if (type == LOGIC_XOR)
         oPort.setState(logicXor());
 
-    else if (type == LOGIC_NOT)
-    {
-        if (iPorts.front().isConnected)
-            oPort.setState(logicNot());
-
-        else
-            oPort.setState(false);
-    }
     else if (type == LOGIC_XNOR)
         oPort.setState(logicXnor());
+
     else if (type == LOGIC_NOR)
         oPort.setState(logicNor());
+
     else if (type == LOGIC_NAND)
         oPort.setState(logicNand());
+
+    bools.clear();
 }
 
 void Gate::gateClickAction(sf::RenderWindow &window)
@@ -254,10 +272,19 @@ void Gate::toggleColor()
 
 bool Gate::logicAnd()
 {
+    // bool state = true;
+    // for (auto &port : iPorts)
+    // {
+    //     if (port.isConnected)
+    //         state = (state && port.getState());
+    // }
+
+    // return state;
+
     bool state = true;
-    for (auto &port : iPorts)
+    for (bool bl : bools)
     {
-        state = (state && port.getState());
+        state = state && bl;
     }
 
     return state;
@@ -265,10 +292,17 @@ bool Gate::logicAnd()
 
 bool Gate::logicOr()
 {
+    // bool state = false;
+    // for (auto &port : iPorts)
+    // {
+    //     state = (state || port.getState());
+    // }
+
+    // return state;
     bool state = false;
-    for (auto &port : iPorts)
+    for (bool bl : bools)
     {
-        state = (state || port.getState());
+        state = (state || bl);
     }
 
     return state;
@@ -276,13 +310,26 @@ bool Gate::logicOr()
 
 bool Gate::logicXor()
 {
-    bool state = false;
-    for (auto &port : iPorts)
+    // bool state = false;
+    // for (auto &port : iPorts)
+    // {
+    //     if (port.isConnected)
+    //         state = (state != port.getState());
+    // }
+
+    // return state;
+
+    int count = 0;
+    for (bool bl : bools)
     {
-        state = (state != port.getState());
+        if (bl)
+            count++;
     }
 
-    return state;
+    if (count % 2 == 0)
+        return false;
+
+    return true;
 }
 
 bool Gate::logicNot()

@@ -4,9 +4,10 @@ std::vector<OutputSignal *> OutputSignal::signals;
 
 OutputSignal::OutputSignal(sf::Vector2f pos)
 {
-    this->setRadius(10.f);
+    this->setRadius(9.f);
+    this->setOrigin(this->getRadius(), this->getRadius());
     this->setOutlineColor(sf::Color::Red);
-    this->setOutlineThickness(2.f);
+    this->setOutlineThickness(1.7f);
     this->setPosition(pos);
 }
 

@@ -19,25 +19,27 @@ public:
     Port();
 
     void setState(bool);
-    void updateColor();
     void setRadius(float);
     void setPosition(sf::Vector2f);
     void setOutlineColor(sf::Color);
     void setOutlineThickness(float);
-    void toggleState();
+    void setOrigin(float, float);
 
-    bool getState();
+
     float getRadius();
     sf::Vector2f getPosition();
-    void drawTo(sf::RenderWindow &);
 
+    bool getState();
     bool isHovered(sf::RenderWindow &window);
     bool isClicked(sf::RenderWindow &window);
     bool contains(sf::Vector2f pos);
 
     void hoverAction(sf::RenderWindow &window);
     void clickAction(sf::RenderWindow &window);
+    void updateColor();
+    void toggleState();
     void duplicate();
+    void drawTo(sf::RenderWindow &);
 };
 
 #endif

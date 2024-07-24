@@ -53,6 +53,9 @@ class Gate
     bool logicNor();
     bool logicNand();
 
+    std::vector<bool> bools;
+    int boolCount;
+
     static int count;
 
 public:
@@ -76,9 +79,9 @@ public:
     static std::string LOGIC_OR;
     static std::string LOGIC_XOR;
     static std::string LOGIC_NOT;
-    static std::string Gate::LOGIC_XNOR;
-    static std::string Gate::LOGIC_NAND;
-    static std::string Gate::LOGIC_NOR;
+    static std::string LOGIC_XNOR;
+    static std::string LOGIC_NAND;
+    static std::string LOGIC_NOR;
 
     // ports
     std::vector<InputPort> iPorts;
@@ -93,6 +96,7 @@ public:
     void setPosition(sf::Vector2f pos);
     void setScale(float scaleX, float scaleY);
     void setPadding(float padding);
+    void setGate();
 
     // getters
     std::string getType();
@@ -117,7 +121,5 @@ public:
     void duplicate(sf::Vector2f);
     void clearState();
     void deleteConnections();
-    void setGate();
-
     void drawTo(sf::RenderWindow &window);
 };
