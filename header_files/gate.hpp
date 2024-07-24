@@ -49,6 +49,9 @@ class Gate
     bool logicOr();
     bool logicXor();
     bool logicNot();
+    bool logicXnor();
+    bool logicNor();
+    bool logicNand();
 
     static int count;
 
@@ -73,6 +76,9 @@ public:
     static std::string LOGIC_OR;
     static std::string LOGIC_XOR;
     static std::string LOGIC_NOT;
+    static std::string Gate::LOGIC_XNOR;
+    static std::string Gate::LOGIC_NAND;
+    static std::string Gate::LOGIC_NOR;
 
     // ports
     std::vector<InputPort> iPorts;
@@ -108,7 +114,7 @@ public:
     void toggleState();
     void toggleColor();
 
-    void duplicate(sf::Vector2f );
+    void duplicate(sf::Vector2f);
     void clearState();
     void deleteConnections();
     void setGate();

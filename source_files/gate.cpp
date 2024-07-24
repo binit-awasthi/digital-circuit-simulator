@@ -4,6 +4,10 @@ std::string Gate::LOGIC_AND = "AND";
 std::string Gate::LOGIC_OR = "OR";
 std::string Gate::LOGIC_XOR = "XOR";
 std::string Gate::LOGIC_NOT = "NOT";
+std::string Gate::LOGIC_XNOR = "XNOR";
+std::string Gate::LOGIC_NAND = "NAND";
+std::string Gate::LOGIC_NOR = "NOR";
+
 std::vector<Gate *> Gate::gates;
 int Gate::count;
 
@@ -213,6 +217,12 @@ void Gate::logicOperation()
         else
             oPort.setState(false);
     }
+    else if (type == LOGIC_XNOR)
+        oPort.setState(logicXnor());
+    else if (type == LOGIC_NOR)
+        oPort.setState(logicNor());
+    else if (type == LOGIC_NAND)
+        oPort.setState(logicNand());
 }
 
 void Gate::gateClickAction(sf::RenderWindow &window)
@@ -279,6 +289,24 @@ bool Gate::logicNot()
 {
     return !(iPorts.front().getState());
 }
+
+//
+
+bool Gate::logicXnor()
+{
+    return !logicXor();
+}
+
+bool Gate::logicNor()
+{
+    return !logicOr();
+}
+bool Gate::logicNand()
+{
+    return !logicAnd();
+}
+
+//
 
 bool Gate::contains(sf::Vector2f pos)
 {
