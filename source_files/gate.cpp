@@ -423,3 +423,18 @@ void Gate::deleteConnections()
 
     this->oPort.childPorts.clear();
 }
+
+void Gate::duplicate(sf::Vector2f pos)
+{
+    Gate *dup = new Gate(type, pos);
+    for (size_t i = 0; i < this->iPorts.size(); i++)
+    {
+        if (this->iPorts[i].parentPort != nullptr)
+        {
+            dup->iPorts[i].parentPort = this->iPorts[i].parentPort;
+            Connection::connections.push_back(new Connection(&dup->iPorts[i], dup->iPorts[i].parentPort));
+        }
+    }
+
+    gates.push_back(dup);
+}

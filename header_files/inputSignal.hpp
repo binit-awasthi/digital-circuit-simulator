@@ -16,4 +16,5 @@ public:
     void deleteConnections();
     static void removeAtPos(sf::Vector2f pos);
     static void removeAll();
+    void duplicate();
 };

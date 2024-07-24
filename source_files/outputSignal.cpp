@@ -69,3 +69,10 @@ void OutputSignal::removeAll()
     }
     signals.clear();
 }
+
+void OutputSignal::duplicate()
+{
+    OutputSignal *dup = new OutputSignal(this->getPosition());
+    dup->parentPort = this->parentPort;
+    signals.push_back(dup);
+}

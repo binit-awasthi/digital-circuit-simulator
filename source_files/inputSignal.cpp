@@ -66,3 +66,10 @@ void InputSignal::removeAll()
     }
     signals.clear();
 }
+
+void InputSignal::duplicate()
+{
+    InputSignal *dup = new InputSignal(this->getPosition());
+    dup->setState(this->getState());
+    signals.push_back(dup);
+}

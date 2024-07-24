@@ -108,11 +108,10 @@ public:
     void toggleState();
     void toggleColor();
 
-    // void duplicate();
+    void duplicate(sf::Vector2f );
     void clearState();
     void deleteConnections();
     void setGate();
-
 
     void drawTo(sf::RenderWindow &window);
 };
