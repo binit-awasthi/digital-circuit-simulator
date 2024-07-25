@@ -39,10 +39,6 @@ class Gate
     void setText(std::string str);
     void setColor();
 
-    // click actions
-    //
-    //
-    // void portClickAction(sf::RenderWindow &window);
     void gateClickAction(sf::RenderWindow &window);
 
     // port
@@ -53,11 +49,16 @@ class Gate
     bool logicOr();
     bool logicXor();
     bool logicNot();
+    bool logicXnor();
+    bool logicNor();
+    bool logicNand();
+
+    std::vector<bool> bools;
+    int boolCount;
 
     static int count;
 
 public:
-    // Gate(std::string type = LOGIC_AND, float width = 100.f, float height = 80.f, sf::Vector2f pos = sf::Vector2f(100, 100));
     Gate(std::string type = LOGIC_AND, sf::Vector2f pos = sf::Vector2f(100, 100));
     ~Gate();
 
@@ -78,6 +79,9 @@ public:
     static std::string LOGIC_OR;
     static std::string LOGIC_XOR;
     static std::string LOGIC_NOT;
+    static std::string LOGIC_XNOR;
+    static std::string LOGIC_NAND;
+    static std::string LOGIC_NOR;
 
     // ports
     std::vector<InputPort> iPorts;
@@ -92,6 +96,7 @@ public:
     void setPosition(sf::Vector2f pos);
     void setScale(float scaleX, float scaleY);
     void setPadding(float padding);
+    void setGate();
 
     // getters
     std::string getType();
@@ -113,11 +118,8 @@ public:
     void toggleState();
     void toggleColor();
 
-    // void duplicate();
+    void duplicate(sf::Vector2f);
     void clearState();
     void deleteConnections();
-
-    // void remove();
-
     void drawTo(sf::RenderWindow &window);
 };

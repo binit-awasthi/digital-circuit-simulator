@@ -4,6 +4,10 @@ std::string Gate::LOGIC_AND = "AND";
 std::string Gate::LOGIC_OR = "OR";
 std::string Gate::LOGIC_XOR = "XOR";
 std::string Gate::LOGIC_NOT = "NOT";
+std::string Gate::LOGIC_XNOR = "XNOR";
+std::string Gate::LOGIC_NAND = "NAND";
+std::string Gate::LOGIC_NOR = "NOR";
+
 std::vector<Gate *> Gate::gates;
 int Gate::count;
 
@@ -13,10 +17,7 @@ Gate::Gate(std::string type, sf::Vector2f pos)
     height = 50.f;
     this->type = type;
 
-    iPorts.push_back(InputPort());
-    iPorts.push_back(InputPort());
-
-    iPorts.front().setState(true);
+    setGate();
 
     setColor();
 
@@ -36,6 +37,20 @@ Gate::Gate(std::string type, sf::Vector2f pos)
     setTextColor(textColor);
 }
 
+void Gate::setGate()
+{
+    if (type == LOGIC_NOT)
+    {
+        iPorts.push_back(InputPort());
+    }
+
+    else
+    {
+        iPorts.push_back(InputPort());
+        iPorts.push_back(InputPort());
+    }
+}
+
 void Gate::setPosition(sf::Vector2f pos)
 {
     this->pos = pos;
@@ -43,13 +58,14 @@ void Gate::setPosition(sf::Vector2f pos)
     gate.setPosition(pos);
     label.setPosition(sf::Vector2f(pos.x - 1, pos.y - 2));
 
-    // iPorts[0].setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
-
     iPorts.front().setPosition(sf::Vector2f(pos.x - width / 2, pos.y - (height / 2) + Port::portRadius * 2));
 
-    for (size_t i = 1; i < iPorts.size(); ++i)
+    if (type != LOGIC_NOT)
     {
-        iPorts[i].setPosition(sf::Vector2f(pos.x - width / 2, iPorts[i - 1].getPosition().y + portOffset));
+        for (size_t i = 1; i < iPorts.size(); ++i)
+        {
+            iPorts[i].setPosition(sf::Vector2f(pos.x - width / 2, iPorts[i - 1].getPosition().y + portOffset));
+        }
     }
 
     oPort.setPosition(sf::Vector2f((pos.x + width / 2), pos.y - (height / 2) + Port::portRadius * 2));
@@ -94,7 +110,6 @@ void Gate::drawTo(sf::RenderWindow &window)
         ip.drawTo(window);
     }
 
-    // oPort.setChildrenState();
     oPort.drawTo(window);
 }
 
@@ -160,12 +175,10 @@ void Gate::hoverAction(sf::RenderWindow &window)
     {
         gate.setOutlineColor(sf::Color::White);
         gate.setOutlineThickness(1);
-        // std::cout << "gate: hovered" << std::endl;
     }
     else
     {
         gate.setOutlineThickness(0);
-        // std::cout << "gate: not hovered" << std::endl;
     }
 }
 
@@ -187,6 +200,28 @@ void Gate::clickAction(sf::RenderWindow &window)
 
 void Gate::logicOperation()
 {
+    boolCount = 0;
+    for (auto &port : iPorts)
+    {
+        if (port.isConnected)
+        {
+            bools.push_back(port.getState());
+            boolCount++;
+        }
+    }
+
+    if (boolCount == 1 && type == LOGIC_NOT)
+    {
+        oPort.setState(logicNot());
+        return;
+    }
+
+    else if (boolCount < 2)
+    {
+        oPort.setState(false);
+        return;
+    }
+
     if (type == LOGIC_AND)
         oPort.setState(logicAnd());
 
@@ -196,8 +231,16 @@ void Gate::logicOperation()
     else if (type == LOGIC_XOR)
         oPort.setState(logicXor());
 
-    else if (type == LOGIC_NOT)
-        oPort.setState(logicNot());
+    else if (type == LOGIC_XNOR)
+        oPort.setState(logicXnor());
+
+    else if (type == LOGIC_NOR)
+        oPort.setState(logicNor());
+
+    else if (type == LOGIC_NAND)
+        oPort.setState(logicNand());
+
+    bools.clear();
 }
 
 void Gate::gateClickAction(sf::RenderWindow &window)
@@ -212,7 +255,6 @@ void Gate::gateClickAction(sf::RenderWindow &window)
 
 void Gate::toggleState()
 {
-    // !clickStatus;
     state = !state;
 }
 
@@ -230,10 +272,19 @@ void Gate::toggleColor()
 
 bool Gate::logicAnd()
 {
+    // bool state = true;
+    // for (auto &port : iPorts)
+    // {
+    //     if (port.isConnected)
+    //         state = (state && port.getState());
+    // }
+
+    // return state;
+
     bool state = true;
-    for (auto &port : iPorts)
+    for (bool bl : bools)
     {
-        state = (state && port.getState());
+        state = state && bl;
     }
 
     return state;
@@ -241,10 +292,17 @@ bool Gate::logicAnd()
 
 bool Gate::logicOr()
 {
+    // bool state = false;
+    // for (auto &port : iPorts)
+    // {
+    //     state = (state || port.getState());
+    // }
+
+    // return state;
     bool state = false;
-    for (auto &port : iPorts)
+    for (bool bl : bools)
     {
-        state = (state || port.getState());
+        state = (state || bl);
     }
 
     return state;
@@ -252,23 +310,50 @@ bool Gate::logicOr()
 
 bool Gate::logicXor()
 {
-    bool state = false;
-    for (auto &port : iPorts)
+    // bool state = false;
+    // for (auto &port : iPorts)
+    // {
+    //     if (port.isConnected)
+    //         state = (state != port.getState());
+    // }
+
+    // return state;
+
+    int count = 0;
+    for (bool bl : bools)
     {
-        state = (state != port.getState());
+        if (bl)
+            count++;
     }
 
-    return state;
+    if (count % 2 == 0)
+        return false;
+
+    return true;
 }
 
 bool Gate::logicNot()
 {
-    if (!iPorts.empty())
-    {
-        return !(iPorts[0].getState());
-    }
-    return false;
+    return !(iPorts.front().getState());
 }
+
+//
+
+bool Gate::logicXnor()
+{
+    return !logicXor();
+}
+
+bool Gate::logicNor()
+{
+    return !logicOr();
+}
+bool Gate::logicNand()
+{
+    return !logicAnd();
+}
+
+//
 
 bool Gate::contains(sf::Vector2f pos)
 {
@@ -279,13 +364,6 @@ std::string Gate::getType()
 {
     return type;
 }
-
-// void Gate::duplicate()
-// {
-//     addGate(this->getType(), this->getPosition());
-//     // gates.push_back(new Gate(this->type, this->getPosition()));
-//     // return dup;
-// }
 
 sf::FloatRect Gate::getGlobalBounds()
 {
@@ -315,7 +393,6 @@ Gate::~Gate()
 int Gate::getCount()
 {
     return gates.size();
-    // return count;
 }
 
 void Gate::removeGate(Gate *gateToRemove)
@@ -324,11 +401,7 @@ void Gate::removeGate(Gate *gateToRemove)
     {
         if (*gateIt == gateToRemove)
         {
-            // deleteConnections(window, connections, gate);
-
-            // delete *gateIt;
             gateIt = gates.erase(gateIt);
-            // std::cout << "Deleted: gate" << std::endl;
             break;
         }
         else
@@ -349,15 +422,10 @@ void Gate::removeAtPos(sf::Vector2f pos)
         if (gate->contains(pos))
         {
             gate->deleteConnections();
-            // delete *gateIt;
             gateIt = gates.erase(gateIt);
-            // std::cout << "gate deleted successfully" << std::endl;
             break;
         }
-        else
-        {
-            ++gateIt;
-        }
+        ++gateIt;
     }
 }
 
@@ -366,7 +434,6 @@ void Gate::removeAll()
     for (Gate *gate : gates)
     {
         gate->deleteConnections();
-        // delete gate;
     }
     gates.clear();
     std::cout << "all gates deleted successfully and cleared" << std::endl;
@@ -379,70 +446,70 @@ void Gate::clearState()
         port.setState(false);
     }
 
-    // oPort.setState(false);
     logicOperation();
 }
 
 void Gate::deleteConnections()
 {
-    try
+    for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
     {
-        // First remove connections related to the output port
-        for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+        auto con = *conIt;
+        if (con->op == &this->oPort)
         {
-            auto con = *conIt;
-            if (con->op == &this->oPort)
+            conIt = Connection::connections.erase(conIt);
+        }
+        else
+        {
+            ++conIt;
+        }
+    }
+
+    for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+    {
+        auto con = *conIt;
+        bool found = false;
+        for (auto &port : this->iPorts)
+        {
+            if (con->ip == &port)
             {
-                // delete con;
+                found = true;
                 conIt = Connection::connections.erase(conIt);
-                // std::cout << "deleted: connection" << std::endl;
-            }
-            else
-            {
-                ++conIt;
+                std::cout << "deleted: connection" << std::endl;
+                port.isConnected = false;
+                port.parentPort = nullptr;
+                port.setState(false);
+                break;
             }
         }
-
-        // Then remove connections related to the input ports
-        for (auto conIt = Connection::connections.begin(); conIt != Connection::connections.end();)
+        if (!found)
         {
-            auto con = *conIt;
-            bool found = false;
-            for (auto &port : this->iPorts)
-            {
-                if (con->ip == &port)
-                {
-                    found = true;
-                    // con =nullptr;
-                    // delete con;
-                    conIt = Connection::connections.erase(conIt);
-                    std::cout << "deleted: connection" << std::endl;
-                    port.isConnected = false;
-                    port.parentPort = nullptr;
-                    port.setState(false);
-                    break;
-                }
-            }
-            if (!found)
-            {
-                ++conIt;
-            }
+            ++conIt;
         }
-
-        logicOperation();
-
-        // Clear child ports of the output port
-        for (auto port : this->oPort.childPorts)
-        {
-            port->parentPort = nullptr;
-            port->setState(false);
-            port->isConnected = false;
-        }
-
-        this->oPort.childPorts.clear();
     }
-    catch (...)
+
+    logicOperation();
+
+    for (auto port : this->oPort.childPorts)
     {
-        std::cout << "error occurred" << std::endl;
+        port->parentPort = nullptr;
+        port->setState(false);
+        port->isConnected = false;
     }
+
+    this->oPort.childPorts.clear();
+}
+
+void Gate::duplicate(sf::Vector2f pos)
+{
+    Gate *dup = new Gate(type, pos);
+    for (size_t i = 0; i < this->iPorts.size(); i++)
+    {
+        if (this->iPorts[i].parentPort != nullptr)
+        {
+            dup->iPorts[i].parentPort = this->iPorts[i].parentPort;
+            Connection::connections.push_back(new Connection(&dup->iPorts[i], dup->iPorts[i].parentPort));
+        }
+    }
+
+    gates.push_back(dup);
 }

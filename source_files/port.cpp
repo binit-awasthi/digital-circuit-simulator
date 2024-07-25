@@ -13,10 +13,6 @@ float Port::portRadius = 5.f;
 Port::Port()
 {
 
-    //
-    //
-    // moving = false;
-
     port.setRadius(Port::portRadius);
     port.setOrigin(port.getRadius(), port.getRadius());
 
@@ -25,8 +21,11 @@ Port::Port()
     state = false;
 
     updateColor();
+}
 
-    // ports.push_back(*this);
+void Port::setOrigin(float x, float y)
+{
+    port.setOrigin(x, y);
 }
 
 void Port::setState(bool state)
@@ -104,8 +103,6 @@ void Port::clickAction(sf::RenderWindow &window)
     if (isClicked(window))
     {
         toggleState();
-        // std::cout << "port state: " << state << std::endl;
-        // toggleColor();
     }
 }
 
@@ -117,4 +114,13 @@ bool Port::contains(sf::Vector2f pos)
 void Port::duplicate()
 {
     Port::ports.push_back(*this);
+}
+
+void Port::setOutlineColor(sf::Color color)
+{
+    port.setOutlineColor(color);
+}
+void Port::setOutlineThickness(float value)
+{
+    port.setOutlineThickness(value);
 }
