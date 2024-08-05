@@ -49,8 +49,4 @@ void Connection::drawTo(sf::RenderWindow &window)
 void Connection::updateState()
 {
     ip->setState(op->getState());
-    if (op->getState())
-        connection.setFillColor(sf::Color::Green);
-    else
-        connection.setFillColor(sf::Color::White);
 }

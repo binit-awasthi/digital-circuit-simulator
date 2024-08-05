@@ -10,7 +10,7 @@ class Component
     float posx;
     float posy;
     float offsetX;
-    float offsetY;
+    float offsetY;  
 
 public:
     Component(sf::RenderWindow &window);

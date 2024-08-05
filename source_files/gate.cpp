@@ -23,7 +23,7 @@ Gate::Gate(std::string type, sf::Vector2f pos)
 
     padding = 20.f;
 
-    portOffset = Port::portRadius * 4;
+    portOffset = Port::portRadius * 3;
 
     setSize(width, height);
     setText(type);
@@ -46,6 +46,7 @@ void Gate::setGate()
 
     else
     {
+        iPorts.push_back(InputPort());
         iPorts.push_back(InputPort());
         iPorts.push_back(InputPort());
     }
@@ -272,14 +273,6 @@ void Gate::toggleColor()
 
 bool Gate::logicAnd()
 {
-    // bool state = true;
-    // for (auto &port : iPorts)
-    // {
-    //     if (port.isConnected)
-    //         state = (state && port.getState());
-    // }
-
-    // return state;
 
     bool state = true;
     for (bool bl : bools)
@@ -292,13 +285,6 @@ bool Gate::logicAnd()
 
 bool Gate::logicOr()
 {
-    // bool state = false;
-    // for (auto &port : iPorts)
-    // {
-    //     state = (state || port.getState());
-    // }
-
-    // return state;
     bool state = false;
     for (bool bl : bools)
     {
@@ -310,26 +296,14 @@ bool Gate::logicOr()
 
 bool Gate::logicXor()
 {
-    // bool state = false;
-    // for (auto &port : iPorts)
-    // {
-    //     if (port.isConnected)
-    //         state = (state != port.getState());
-    // }
 
-    // return state;
+    bool state = false;
 
-    int count = 0;
     for (bool bl : bools)
     {
-        if (bl)
-            count++;
+        state = (state != bl);
     }
-
-    if (count % 2 == 0)
-        return false;
-
-    return true;
+    return state;
 }
 
 bool Gate::logicNot()
