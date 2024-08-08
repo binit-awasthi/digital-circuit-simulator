@@ -34,28 +34,37 @@ The Digital Circuit Simulator is a powerful C++ program designed to help users d
 1. **Install SFML**:
 
    - **Linux**:
+     ```bash
      sudo apt-get install libsfml-dev
+     ```
 
    - **MacOS** (using Homebrew):
+     ```bash
      brew install sfml
+     ```
 
    - **Windows**:
      Download the SFML library from the [official website](https://www.sfml-dev.org/download.php) and follow the installation instructions for your specific development environment.
 
 2. **Clone the Repository**:
-
+   ```bash
    git clone https://github.com/binit-awasthi/digital-circuit-simulator.git
    cd digital-circuit-simulator
+   ```
 
 3. **Build the Project**:
 
-   - Add path to sfml include files and binary to the Makefile
-   - run "make" on the terminal
+   Add path to sfml include files and binary to the Makefile then run the following command on terminal
+   
+   ```bash
+     make
+     ```
 
 4. **Run the Simulator**:
-
+   ```bash
    ./simulator
+   ```
 
-icon attribution link:
+ ## Attribution:
 
 <a href="https://www.flaticon.com/free-icons/logic" title="logic icons">Logic icons created by orvipixel - Flaticon</a>
