@@ -55,3 +55,7 @@ The Digital Circuit Simulator is a powerful C++ program designed to help users d
 4. **Run the Simulator**:
 
    ./simulator
+
+icon attribution link:
+
+<a href="https://www.flaticon.com/free-icons/logic" title="logic icons">Logic icons created by orvipixel - Flaticon</a>
