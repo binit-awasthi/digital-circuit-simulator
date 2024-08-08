@@ -6,6 +6,7 @@
 #include <cmath>
 #include <vector>
 #include <tuple>
+#include <fstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>

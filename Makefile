@@ -1,16 +1,16 @@
 all: compile run 
 
 compile:
-	g++ -g -Wall main.cpp ./source_files/*.cpp -o main.out -lsfml-graphics -lsfml-window -lsfml-system 
+	g++ -g -Wall main.cpp ./source_files/*.cpp -o simulator.out -lsfml-graphics -lsfml-window -lsfml-system 
 
 run: 
-	./main.out
+	./simulator.out
 
 clean: 
-	rm ./main.out
+	rm ./simulator.out
 
 showFilePersmission:
-	ls -l main.out
+	ls -l simulator.out
 
 setExecutable:
-	chmod +x ./main.out
+	chmod +x ./simulator.out

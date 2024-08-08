@@ -69,7 +69,8 @@ void Gate::setPosition(sf::Vector2f pos)
         }
     }
 
-    oPort.setPosition(sf::Vector2f((pos.x + width / 2), pos.y - (height / 2) + Port::portRadius * 2));
+    oPort.setPosition(sf::Vector2f((pos.x + width / 2), pos.y));
+    // oPort.setPosition(sf::Vector2f((pos.x + width / 2), pos.y - (height / 2) + Port::portRadius * 2));
 }
 
 void Gate::setSize(float width, float height)
