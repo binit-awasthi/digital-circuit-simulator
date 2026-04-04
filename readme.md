@@ -1,5 +1,7 @@
 # Digital Circuit Simulator
 
+![Demo](assets/demo.gif)
+
 ## Overview
 
 The Digital Circuit Simulator is a powerful C++ program designed to help users design and simulate digital circuits with ease. With its intuitive drag-and-drop interface, users can effortlessly add logic gates, input/output signals, and create connections between them to visualize and test circuit functionality.
